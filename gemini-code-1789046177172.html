@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Slither Snake IO</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: none;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #0b0e14;
+            font-family: sans-serif;
+        }
+
+        canvas {
+            display: block;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        /* Таблиця лідерів */
+        .leaderboard {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            padding: 12px 18px;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 14px;
+            min-width: 160px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .leaderboard h3 {
+            color: #00ff88;
+            margin-bottom: 8px;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        .leaderboard ol {
+            padding-left: 20px;
+        }
+
+        .leaderboard li {
+            margin-bottom: 4px;
+        }
+
+        /* Екран програшу */
+        #game-over {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            z-index: 10;
+            display: none;
+        }
+
+        #game-over h1 {
+            color: #ff4757;
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        #restart-btn {
+            margin-top: 20px;
+            padding: 15px 35px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            background: #00ff88;
+            border: none;
+            border-radius: 25px;
+            color: #000;
+            cursor: pointer;
+        }
+
+        /* Джойстик та кнопка для телефонів */
+        .touch-controls {
+            position: absolute;
+            bottom: 30px;
+            left: 30px;
+            width: 120px;
+            height: 120px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .stick {
+            width: 50px;
+            height: 50px;
+            background: rgba(0, 255, 136, 0.5);
+            border-radius: 50%;
+            position: absolute;
+        }
+
+        .boost-btn {
+            position: absolute;
+            bottom: 40px;
+            right: 40px;
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 71, 87, 0.6);
+            border: 2px solid #ff4757;
+            border-radius: 50%;
+            color: white;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="game"></canvas>
+
+    <div class="leaderboard">
+        <h3>ТОП ЗМІЙОК</h3>
+        <ol id="leaderboard-list"></ol>
+    </div>
+
+    <div id="game-over">
+        <h1>ТЕБЕ ЗНІЩИЛИ!</h1>
+        <p>Твій рахунок: <span id="final-score">0</span></p>
+        <button id="restart-btn" onclick="restartGame()">ГРАТИ ЗНОВУ</button>
+    </div>
+
+    <!-- Мобільне керування -->
+    <div class="touch-controls" id="joystick">
+        <div class="stick" id="stick"></div>
+    </div>
+    <div class="boost-btn" id="boost-btn">BOOST</div>
+
+    <script>
+        const canvas = document.getElementById("game");
+        const ctx = canvas.getContext("2d");
+
+        // Розміри ігрового світу (карта більша за екран)
+        const WORLD_SIZE = 3000;
+        const FOOD_COUNT = 600;
+        const BOT_COUNT = 15;
+
+        let mouseX = 0, mouseY = 0;
+        let isBoosting = false;
+
+        // Камера
+        let camera = { x: 0, y: 0 };
+
+        // Гравець та Боти
+        let player;
+        let bots = [];
+        let foods = [];
+
+        const BOT_NAMES = ["Alex", "Viper", "Slayer", "Rex", "Dragon", "Shadow", "Alpha", "Ghost", "Titan", "Turbo"];
+        const COLORS = ["#00ff88", "#ff4757", "#1e90ff", "#ffa500", "#e056fd", "#f8efba", "#00d2d3"];
+
+        class Snake {
+            constructor(x, y, color, name, isBot = false) {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                this.name = name;
+                this.isBot = isBot;
+                this.angle = Math.random() * Math.PI * 2;
+                this.speed = 3;
+                this.length = 20;
+                this.body = [];
+                this.dead = false;
+                this.score = 0;
+
+                for (let i = 0; i < this.length; i++) {
+                    this.body.push({ x: this.x, y: this.y });
+                }
+            }
+
+            update() {
+                if (this.dead) return;
+
+                let currentSpeed = this.speed * (this.boosting ? 1.8 : 1);
+
+                // Втрата маси при прискоренні
+                if (this.boosting && this.length > 10 && Math.random() < 0.2) {
+                    this.length -= 0.5;
+                    foods.push({
+                        x: this.body[this.body.length - 1].x,
+                        y: this.body[this.body.length - 1].y,
+                        size: 3,
+                        color: this.color
+                    });
+                }
+
+                if (this.isBot) {
+                    this.updateBotLogic();
+                }
+
+                // Рух голови
+                this.x += Math.cos(this.angle) * currentSpeed;
+                this.y += Math.sin(this.angle) * currentSpeed;
+
+                // Межі карти
+                this.x = Math.max(50, Math.min(WORLD_SIZE - 50, this.x));
+                this.y = Math.max(50, Math.min(WORLD_SIZE - 50, this.y));
+
+                this.body.unshift({ x: this.x, y: this.y });
+
+                while (this.body.length > this.length) {
+                    this.body.pop();
+                }
+
+                this.score = Math.floor(this.length * 10);
+            }
+
+            updateBotLogic() {
+                // Бот шукає найближчу їжу
+                let nearestFood = null;
+                let minDist = 300;
+
+                for (let f of foods) {
+                    let d = Math.hypot(f.x - this.x, f.y - this.y);
+                    if (d < minDist) {
+                        minDist = d;
+                        nearestFood = f;
+                    }
+                }
+
+                if (nearestFood) {
+                    let targetAngle = Math.atan2(nearestFood.y - this.y, nearestFood.x - this.x);
+                    this.angle += (targetAngle - this.angle) * 0.1;
+                } else if (Math.random() < 0.02) {
+                    this.angle += (Math.random() - 0.5);
+                }
+            }
+
+            draw() {
+                if (this.dead) return;
+
+                // Малювання тіла
+                for (let i = this.body.length - 1; i >= 0; i--) {
+                    let p = this.body[i];
+                    ctx.beginPath();
+                    ctx.arc(p.x - camera.x, p.y - camera.y, 10, 0, Math.PI * 2);
+                    ctx.fillStyle = this.color;
+                    ctx.fill();
+                    ctx.closePath();
+                }
+
+                // Ім'я над змійкою
+                ctx.fillStyle = "#fff";
+                ctx.font = "12px sans-serif";
+                ctx.textAlign = "center";
+                ctx.fillText(this.name, this.x - camera.x, this.y - camera.y - 18);
+            }
+        }
+
+        function init() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            player = new Snake(WORLD_SIZE / 2, WORLD_SIZE / 2, "#00ff88", "Ти (Гравець)");
+
+            bots = [];
+            for (let i = 0; i < BOT_COUNT; i++) {
+                spawnBot();
+            }
+
+            foods = [];
+            for (let i = 0; i < FOOD_COUNT; i++) {
+                spawnFood();
+            }
+
+            document.getElementById("game-over").style.display = "none";
+            requestAnimationFrame(gameLoop);
+        }
+
+        function spawnBot() {
+            let name = BOT_NAMES[Math.floor(Math.random() * BOT_NAMES.length)];
+            let color = COLORS[Math.floor(Math.random() * COLORS.length)];
+            bots.push(new Snake(Math.random() * WORLD_SIZE, Math.random() * WORLD_SIZE, color, name, true));
+        }
+
+        function spawnFood() {
+            foods.push({
+                x: Math.random() * WORLD_SIZE,
+                y: Math.random() * WORLD_SIZE,
+                size: Math.random() * 3 + 2,
+                color: COLORS[Math.floor(Math.random() * COLORS.length)]
+            });
+        }
+
+        function checkCollisions() {
+            let allSnakes = [player, ...bots];
+
+            allSnakes.forEach(snake => {
+                if (snake.dead) return;
+
+                // Поїдання їжі
+                foods.forEach((f, index) => {
+                    if (Math.hypot(snake.x - f.x, snake.y - f.y) < 15) {
+                        snake.length += f.size * 0.3;
+                        foods.splice(index, 1);
+                        spawnFood();
+                    }
+                });
+
+                // Зіткнення з іншими змійками (голова в тіло)
+                allSnakes.forEach(other => {
+                    if (snake === other || other.dead) return;
+
+                    for (let i = 0; i < other.body.length; i++) {
+                        let p = other.body[i];
+                        if (Math.hypot(snake.x - p.x, snake.y - p.y) < 12) {
+                            killSnake(snake);
+                            break;
+                        }
+                    }
+                });
+            });
+        }
+
+        function killSnake(snake) {
+            snake.dead = true;
+
+            // Змійка розпадається на їжу після смерті
+            snake.body.forEach(p => {
+                foods.push({
+                    x: p.x + (Math.random() - 0.5) * 20,
+                    y: p.y + (Math.random() - 0.5) * 20,
+                    size: 5,
+                    color: snake.color
+                });
+            });
+
+            if (snake === player) {
+                document.getElementById("final-score").textContent = player.score;
+                document.getElementById("game-over").style.display = "flex";
+            } else {
+                // Переспавн бота
+                setTimeout(() => {
+                    bots = bots.filter(b => b !== snake);
+                    spawnBot();
+                }, 2000);
+            }
+        }
+
+        function updateLeaderboard() {
+            let list = [player, ...bots].sort((a, b) => b.score - a.score).slice(0, 5);
+            let html = "";
+            list.forEach(s => {
+                html += `<li>${s.name}: ${s.score}</li>`;
+            });
+            document.getElementById("leaderboard-list").innerHTML = html;
+        }
+
+        function gameLoop() {
+            // Керування мишкою на ПК
+            if (!isTouch) {
+                let centerX = canvas.width / 2;
+                let centerY = canvas.height / 2;
+                player.angle = Math.atan2(mouseY - centerY, mouseX - centerX);
+            }
+
+            player.boosting = isBoosting;
+
+            // Оновлення об'єктів
+            player.update();
+            bots.forEach(b => b.update());
+            checkCollisions();
+
+            // Камера слідує за гравцем
+            camera.x = player.x - canvas.width / 2;
+            camera.y = player.y - canvas.height / 2;
+
+            // Очищення екрана
+            ctx.fillStyle = "#0b0e14";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Малювання сітки світу
+            ctx.strokeStyle = "rgba(255,255,255,0.03)";
+            ctx.lineWidth = 1;
+            for (let x = 0; x < WORLD_SIZE; x += 100) {
+                ctx.beginPath();
+                ctx.moveTo(x - camera.x, 0 - camera.y);
+                ctx.lineTo(x - camera.x, WORLD_SIZE - camera.y);
+                ctx.stroke();
+            }
+            for (let y = 0; y < WORLD_SIZE; y += 100) {
+                ctx.beginPath();
+                ctx.moveTo(0 - camera.x, y - camera.y);
+                ctx.lineTo(WORLD_SIZE - camera.x, y - camera.y);
+                ctx.stroke();
+            }
+
+            // Малювання їжі
+            foods.forEach(f => {
+                ctx.beginPath();
+                ctx.arc(f.x - camera.x, f.y - camera.y, f.size, 0, Math.PI * 2);
+                ctx.fillStyle = f.color;
+                ctx.fill();
+            });
+
+            // Малювання змійок
+            bots.forEach(b => b.draw());
+            player.draw();
+
+            updateLeaderboard();
+
+            if (!player.dead) {
+                requestAnimationFrame(gameLoop);
+            }
+        }
+
+        function restartGame() {
+            init();
+        }
+
+        // --- КЕРУВАННЯ ---
+
+        let isTouch = false;
+
+        window.addEventListener("mousemove", e => {
+            if (!isTouch) {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+            }
+        });
+
+        window.addEventListener("mousedown", () => isBoosting = true);
+        window.addEventListener("mouseup", () => isBoosting = false);
+
+        // Тач-керування для телефонів
+        const joystick = document.getElementById("joystick");
+        const stick = document.getElementById("stick");
+        const boostBtn = document.getElementById("boost-btn");
+
+        joystick.addEventListener("touchstart", () => isTouch = true);
+        joystick.addEventListener("touchmove", e => {
+            e.preventDefault();
+            isTouch = true;
+            let touch = e.touches[0];
+            let rect = joystick.getBoundingClientRect();
+            let centerX = rect.left + rect.width / 2;
+            let centerY = rect.top + rect.height / 2;
+
+            let dx = touch.clientX - centerX;
+            let dy = touch.clientY - centerY;
+
+            player.angle = Math.atan2(dy, dx);
+
+            let dist = Math.min(40, Math.hypot(dx, dy));
+            let angle = Math.atan2(dy, dx);
+            stick.style.transform = `translate(${Math.cos(angle) * dist}px, ${Math.sin(angle) * dist}px)`;
+        });
+
+        joystick.addEventListener("touchend", () => {
+            stick.style.transform = `translate(0px, 0px)`;
+        });
+
+        boostBtn.addEventListener("touchstart", (e) => { e.preventDefault(); isBoosting = true; });
+        boostBtn.addEventListener("touchend", (e) => { e.preventDefault(); isBoosting = false; });
+
+        window.addEventListener("resize", () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        init();
+    </script>
+</body>
+</html>
