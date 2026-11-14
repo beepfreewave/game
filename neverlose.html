@@ -54,13 +54,20 @@
                 </div>
                 <span class="text-xl font-extrabold tracking-wider bg-gradient-to-r from-white via-indigo-200 to-indigo-400 bg-clip-text text-transparent">NEVERLOSE</span>
             </div>
+            
             <nav class="hidden md:flex items-center space-x-8 text-sm font-medium text-gray-400">
-                <a href="#features" class="hover:text-white transition">Функции</a>
-                <a href="#pricing" class="hover:text-white transition">Цены</a>
-                <a href="#download" class="hover:text-white transition">Скачать</a>
+                <a href="#features" class="hover:text-white transition" data-key="nav_features">Функции</a>
+                <a href="#pricing" class="hover:text-white transition" data-key="nav_pricing">Цены</a>
+                <a href="#download" class="hover:text-white transition" data-key="nav_download">Скачать</a>
             </nav>
-            <div>
-                <a href="#pricing" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm transition shadow-glow">Начать бесплатно</a>
+
+            <div class="flex items-center space-x-4">
+                <button onclick="toggleLanguage()" class="px-3 py-2 rounded-xl bg-nl-card border border-nl-border text-gray-300 hover:text-white text-xs font-bold transition flex items-center space-x-1.5">
+                    <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path></svg>
+                    <span id="lang-label">RU / EN</span>
+                </button>
+
+                <a href="#pricing" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm transition shadow-glow" data-key="btn_start">Начать бесплатно</a>
             </div>
         </div>
     </header>
@@ -69,18 +76,18 @@
         <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-indigo-600/20 rounded-full blur-[120px] pointer-events-none"></div>
         <div class="max-w-5xl mx-auto text-center relative z-10">
             <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-semibold mb-6 uppercase tracking-widest">
-                <span class="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span> CS2 Platform v2.4 Updated
+                <span class="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span> <span data-key="badge_version">CS2 Platform v2.4 Updated</span>
             </div>
             <h1 class="text-5xl sm:text-7xl font-extrabold tracking-tight mb-8">
-                Превосходи в каждом матче <br>
-                <span class="bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-500 bg-clip-text text-transparent">Без компромиссов</span>
+                <span data-key="hero_title_1">Превосходи в каждом матче</span> <br>
+                <span class="bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-500 bg-clip-text text-transparent" data-key="hero_title_2">Без компромиссов</span>
             </h1>
-            <p class="text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto mb-10">
+            <p class="text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto mb-10" data-key="hero_desc">
                 Современное ПО для Counter-Strike 2 с непревзойденной защитой, стабильным визуалом и продвинутым функционалом.
             </p>
             <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <a href="#pricing" class="w-full sm:w-auto px-8 py-4 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold text-base transition shadow-glow-lg flex items-center justify-center space-x-2">
-                    <span>Попробовать 24 часа бесплатно</span>
+                    <span data-key="btn_trial">Попробовать 24 часа бесплатно</span>
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                 </a>
             </div>
@@ -90,25 +97,25 @@
     <section id="pricing" class="py-20 px-4 bg-nl-dark/50 border-t border-nl-border">
         <div class="max-w-6xl mx-auto">
             <div class="text-center mb-16">
-                <h2 class="text-3xl sm:text-4xl font-bold mb-4">Выбери свой доступ</h2>
-                <p class="text-gray-400">Начни с бесплатного тестового периода на 24 часа прямо сейчас.</p>
+                <h2 class="text-3xl sm:text-4xl font-bold mb-4" data-key="pricing_title">Выбери свой доступ</h2>
+                <p class="text-gray-400" data-key="pricing_subtitle">Начни с бесплатного тестового периода на 24 часа прямо сейчас.</p>
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
                 
                 <div class="bg-nl-card border border-indigo-500/40 rounded-2xl p-8 flex flex-col justify-between relative shadow-glow">
-                    <div class="absolute -top-3 right-6 bg-indigo-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Тест</div>
+                    <div class="absolute -top-3 right-6 bg-indigo-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider" data-key="card1_tag">Тест</div>
                     <div>
                         <h3 class="text-xl font-bold mb-2">Free Trial</h3>
-                        <p class="text-gray-400 text-sm mb-6">Оцени все возможности софта без вложений.</p>
-                        <div class="text-4xl font-extrabold mb-6">0 <span class="text-lg font-normal text-gray-400">руб / 24ч</span></div>
+                        <p class="text-gray-400 text-sm mb-6" data-key="card1_desc">Оцени все возможности софта без вложений.</p>
+                        <div class="text-4xl font-extrabold mb-6">0 <span class="text-lg font-normal text-gray-400" data-key="card1_price">руб / 24ч</span></div>
                         <ul class="space-y-3 text-sm text-gray-300 mb-8">
-                            <li class="flex items-center space-x-3"><svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg><span>Полный функционал на 24 часа</span></li>
-                            <li class="flex items-center space-x-3"><svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg><span>Обход всех античитов</span></li>
-                            <li class="flex items-center space-x-3"><svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg><span>Мгновенный доступ к файлу</span></li>
+                            <li class="flex items-center space-x-3"><svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg><span data-key="card1_f1">Полный функционал на 24 часа</span></li>
+                            <li class="flex items-center space-x-3"><svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg><span data-key="card1_f2">Обход всех античитов</span></li>
+                            <li class="flex items-center space-x-3"><svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg><span data-key="card1_f3">Мгновенный доступ к файлу</span></li>
                         </ul>
                     </div>
-                    <a href="https://raw.githubusercontent.com/beepfreewave/compiled/main/neverlose%20loader.exe" download class="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-center transition block shadow-glow">
+                    <a href="https://raw.githubusercontent.com/beepfreewave/compiled/main/neverlose%20loader.exe" download class="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-center transition block shadow-glow" data-key="card1_btn">
                         Скачать бесплатно (24ч)
                     </a>
                 </div>
@@ -116,15 +123,15 @@
                 <div class="bg-nl-card border border-nl-border rounded-2xl p-8 flex flex-col justify-between">
                     <div>
                         <h3 class="text-xl font-bold mb-2">Monthly Pro</h3>
-                        <p class="text-gray-400 text-sm mb-6">Для тех, кто играет на результат каждый день.</p>
-                        <div class="text-4xl font-extrabold mb-6">499 <span class="text-lg font-normal text-gray-400">руб / 30 дней</span></div>
+                        <p class="text-gray-400 text-sm mb-6" data-key="card2_desc">Для тех, кто играет на результат каждый день.</p>
+                        <div class="text-4xl font-extrabold mb-6">499 <span class="text-lg font-normal text-gray-400" data-key="card2_price">руб / 30 дней</span></div>
                         <ul class="space-y-3 text-sm text-gray-300 mb-8">
-                            <li class="flex items-center space-x-3"><svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg><span>Безлимитный доступ на месяц</span></li>
-                            <li class="flex items-center space-x-3"><svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg><span>Приоритетная поддержка 24/7</span></li>
-                            <li class="flex items-center space-x-3"><svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg><span>Эксклюзивные конфиги и скрипты</span></li>
+                            <li class="flex items-center space-x-3"><svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg><span data-key="card2_f1">Безлимитный доступ на месяц</span></li>
+                            <li class="flex items-center space-x-3"><svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg><span data-key="card2_f2">Приоритетная поддержка 24/7</span></li>
+                            <li class="flex items-center space-x-3"><svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg><span data-key="card2_f3">Эксклюзивные конфиги и скрипты</span></li>
                         </ul>
                     </div>
-                    <a href="#download" class="w-full py-3 rounded-xl bg-gray-800 hover:bg-gray-700 text-white font-semibold text-center transition block">
+                    <a href="#download" class="w-full py-3 rounded-xl bg-gray-800 hover:bg-gray-700 text-white font-semibold text-center transition block" data-key="card2_btn">
                         Купить подписку
                     </a>
                 </div>
@@ -134,8 +141,78 @@
     </section>
 
     <footer id="download" class="border-t border-nl-border py-12 px-4 text-center text-gray-500 text-sm mt-auto">
-        <p>&copy; 2026 Neverlose CS2. Все права защищены. Не является официальным ПО Valve Corp.</p>
+        <p data-key="footer_text">&copy; 2026 Neverlose CS2. Все права защищены. Не является официальным ПО Valve Corp.</p>
     </footer>
 
+    <script>
+        const translations = {
+            ru: {
+                nav_features: "Функции",
+                nav_pricing: "Цены",
+                nav_download: "Скачать",
+                btn_start: "Начать бесплатно",
+                badge_version: "CS2 Platform v2.4 Updated",
+                hero_title_1: "Превосходи в каждом матче",
+                hero_title_2: "Без компромиссов",
+                hero_desc: "Современное ПО для Counter-Strike 2 с непревзойденной защитой, стабильным визуалом и продвинутым функционалом.",
+                btn_trial: "Попробовать 24 часа бесплатно",
+                pricing_title: "Выбери свой доступ",
+                pricing_subtitle: "Начни с бесплатного тестового периода на 24 часа прямо сейчас.",
+                card1_tag: "Тест",
+                card1_desc: "Оцени все возможности софта без вложений.",
+                card1_price: "руб / 24ч",
+                card1_f1: "Полный функционал на 24 часа",
+                card1_f2: "Обход всех античитов",
+                card1_f3: "Мгновенный доступ к файлу",
+                card1_btn: "Скачать бесплатно (24ч)",
+                card2_desc: "Для тех, кто играет на результат каждый день.",
+                card2_price: "руб / 30 дней",
+                card2_f1: "Безлимитный доступ на месяц",
+                card2_f2: "Приоритетная поддержка 24/7",
+                card2_f3: "Эксклюзивные конфиги и скрипты",
+                card2_btn: "Купить подписку",
+                footer_text: "© 2026 Neverlose CS2. Все права защищены. Не является официальным ПО Valve Corp."
+            },
+            en: {
+                nav_features: "Features",
+                nav_pricing: "Pricing",
+                nav_download: "Download",
+                btn_start: "Get Started",
+                badge_version: "CS2 Platform v2.4 Updated",
+                hero_title_1: "Outplay in every match",
+                hero_title_2: "Without compromises",
+                hero_desc: "Next-gen software for Counter-Strike 2 featuring robust security, stable visuals, and advanced functionality.",
+                btn_trial: "Try 24 Hours Free",
+                pricing_title: "Choose Your Access",
+                pricing_subtitle: "Start with a 24-hour free trial right now.",
+                card1_tag: "Test",
+                card1_desc: "Evaluate all features of the software for free.",
+                card1_price: "RUB / 24h",
+                card1_f1: "Full functionality for 24 hours",
+                card1_f2: "Anti-cheat bypass protection",
+                card1_f3: "Instant file access",
+                card1_btn: "Download Free (24h)",
+                card2_desc: "For those who play for results every day.",
+                card2_price: "RUB / 30 days",
+                card2_f1: "Unlimited monthly access",
+                card2_f2: "Priority 24/7 support",
+                card2_f3: "Exclusive configs and scripts",
+                card2_btn: "Purchase Subscription",
+                footer_text: "© 2026 Neverlose CS2. All rights reserved. Not affiliated with Valve Corp."
+            }
+        };
+
+        let currentLang = 'ru';
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'ru' ? 'en' : 'ru';
+            document.querySelectorAll('[data-key]').forEach(el => {
+                const key = el.getAttribute('data-key');
+                if (translations[currentLang][key]) {
+                    el.textContent = translations[currentLang][key];
+                }
+            });
+        }
+    </script>
 </body>
 </html>
